@@ -1,0 +1,12 @@
+/* flexing form checkboxes */
+#form {
+  width: 100%;
+}
+
+.form_checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  .form-check{
+    width: 30%;
+  }
+}
