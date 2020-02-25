@@ -1,0 +1,26 @@
+# ruby on rails stripe customer creation existing information from the users database
+  def create_customer!
+    # making a stripe customer using user data
+    @customer = Stripe::Customer.create(
+      email: email,
+      description: name,
+      source: stripe_token,
+      metadata: {
+        user_id: user_id
+      }
+    )
+
+    #charge function
+    charge = Stripe::Charge.create(
+      :customer    => customer.id,
+      :amount      => user.amount, # amount comes from a row in the database where this customer id matches user id
+      :description => 'Rails Stripe customer',
+      :currency    => 'usd'
+    )
+
+
+    self.stripe_id = @customer.id
+    self.save
+
+    @customer
+  end

@@ -1,0 +1,58 @@
+<script>
+// Replace the validation UI for all forms
+var forms = document.querySelectorAll( "form" );
+for ( var i = 0; i < forms.length; i++ ) {
+    replaceValidationUI( forms[ i ] );
+
+}
+//function to replace the built in validation with our custom validation
+function replaceValidationUI( form ){
+
+    form.addEventListener('invalid', (function () {
+        return function (e) {
+            e.preventDefault();
+        };
+    })(), true);
+
+    //safari
+    form.addEventListener( "submit", function( event ) {
+        if ( !this.checkValidity() ) {
+            event.preventDefault();
+        }
+    });
+
+
+    var submitButton = form.querySelector( "button:not([type=button]), input[type=submit]" );
+
+    submitButton.addEventListener( "click", function( event ) {
+        var invalidFields = form.querySelectorAll( ":invalid" ),
+            errorMessages = form.querySelectorAll( ".error-message" ),
+            parent;
+
+        // Remove any existing messages we plan to use custom messages
+        for ( var i = 0; i < errorMessages.length; i++ ) {
+            errorMessages[ i ].parentNode.removeChild( errorMessages[ i ] );
+        }
+
+        //very specific check on an age range, with a custom validation message
+        for ( var i = 0; i < invalidFields.length; i++ ) {
+            parent = invalidFields[ i ].parentNode;
+            if(invalidFields[i].id == 'txt-your-age'){
+                if(invalidFields[i].value <= 18 || invalidFields[i].value >= 66){
+                parent.insertAdjacentHTML( "beforeend", "<div class='error-message'>[message about the submitter being too young or too old to apply]</div>" )
+                }
+            }
+            else{
+            parent.insertAdjacentHTML( "beforeend", "<div class='error-message'>" +
+                invalidFields[ i ].validationMessage +
+                "</div>" );
+            }
+        }
+
+        // If there are errors, give focus to the first invalid field
+        if ( invalidFields.length > 0 ) {
+            invalidFields[ 0 ].focus();
+        }
+    });
+}
+</script>

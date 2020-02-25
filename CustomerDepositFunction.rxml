@@ -1,0 +1,21 @@
+# deposit function for payment and caches the amount in the database for that user
+  def deposit
+    @user = current_user
+    token = params[:stripeToken]
+    amount = params[:amount].to_i
+    amount = amount * 100
+
+    charge =  Stripe::Charge.create({
+      amount: amount,
+      currency: 'usd',
+      source: token, # obtained with Stripe.js
+      description: 'rent charge for ' +  @user.email,
+      metadata: {
+        tenant_id: @user.tenant_id
+      },
+      receipt_email: @user.email
+    })
+    @user.amount = amount
+    @user.charge_id = charge.id
+    @user.save
+  end
